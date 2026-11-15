@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    environment {
+    PATH = "/Users/niswa/.docker/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
+}
+
     stages {
 
         stage('Checkout') {
@@ -20,6 +24,13 @@ pipeline {
         stage('Test Application') {
             steps {
                 sh 'PYTHONPATH=. .venv/bin/pytest -v'
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                sh 'which docker'
+                sh 'docker --version'
             }
         }
 
