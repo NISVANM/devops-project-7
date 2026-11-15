@@ -3,6 +3,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -16,19 +17,19 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Test Application') {
             steps {
-                sh '.venv/bin/pytest -v'
+                sh 'PYTHONPATH=. .venv/bin/pytest -v'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devops-project-7:latest .'
             }
         }
 
-        stage('Kubernetes Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh 'kubectl apply -f k8s/'
                 sh 'kubectl rollout status deployment/devops-app'
@@ -38,10 +39,11 @@ pipeline {
 
     post {
         success {
-            echo 'Application deployed successfully!'
+            echo 'CI/CD Pipeline completed successfully!'
         }
+
         failure {
-            echo 'Deployment failed. Check console output.'
+            echo 'Pipeline failed. Check console output.'
         }
     }
 }
